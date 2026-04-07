@@ -1,6 +1,8 @@
+import os
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
+
 
 from app.database import engine, Base
 from app.models import user, product, trade  # noqa: F401 — ensure models are registered
