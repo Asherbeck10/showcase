@@ -1,0 +1,21 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.db
+.env
+
+# Virtual environment
+backend/.venv/
+
+# Pytest
+.pytest_cache/
+backend/.pytest_cache/
+
+# IDE
+.vscode/
+.idea/
+
+# macOS
+.DS_Store

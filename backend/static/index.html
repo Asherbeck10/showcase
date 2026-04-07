@@ -1,0 +1,903 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Trading Demo</title>
+    <style>
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        font-family: system-ui, sans-serif;
+        background: #0f1117;
+        color: #e2e8f0;
+        min-height: 100vh;
+      }
+
+      header {
+        background: #1a1f2e;
+        border-bottom: 1px solid #2d3748;
+        padding: 1rem 2rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+      header h1 {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: #63b3ed;
+        letter-spacing: 0.05em;
+      }
+      #user-info {
+        display: none;
+        align-items: center;
+        gap: 0.75rem;
+      }
+      #user-label {
+        font-size: 0.85rem;
+        color: #a0aec0;
+      }
+      #user-label span {
+        color: #e2e8f0;
+        font-weight: 600;
+      }
+      #logout-btn {
+        background: #2d3748;
+        border: 1px solid #4a5568;
+        color: #e2e8f0;
+        padding: 0.4rem 1rem;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 0.85rem;
+        font-weight: 600;
+        transition: all 0.15s;
+      }
+      #logout-btn:hover {
+        background: #e53e3e;
+        border-color: #e53e3e;
+        color: #fff;
+      }
+
+      main {
+        max-width: 960px;
+        margin: 2.5rem auto;
+        padding: 0 1.5rem;
+      }
+
+      .section {
+        display: none;
+      }
+      .section.active {
+        display: block;
+      }
+
+      .card {
+        background: #1a1f2e;
+        border: 1px solid #2d3748;
+        border-radius: 12px;
+        padding: 2rem;
+      }
+      .card h2 {
+        font-size: 1.1rem;
+        font-weight: 600;
+        margin-bottom: 1.5rem;
+        color: #90cdf4;
+      }
+
+      label {
+        display: block;
+        font-size: 0.85rem;
+        color: #a0aec0;
+        margin-bottom: 0.35rem;
+      }
+      input,
+      select {
+        width: 100%;
+        padding: 0.6rem 0.85rem;
+        background: #0f1117;
+        border: 1px solid #2d3748;
+        border-radius: 8px;
+        color: #e2e8f0;
+        font-size: 0.95rem;
+        margin-bottom: 1rem;
+      }
+      input:focus,
+      select:focus {
+        outline: none;
+        border-color: #63b3ed;
+      }
+
+      .btn {
+        display: inline-block;
+        padding: 0.6rem 1.4rem;
+        border: none;
+        border-radius: 8px;
+        font-size: 0.95rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: opacity 0.15s;
+      }
+      .btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+      .btn-primary {
+        background: #3182ce;
+        color: #fff;
+      }
+      .btn-primary:hover:not(:disabled) {
+        background: #2b6cb0;
+      }
+      .btn-success {
+        background: #276749;
+        color: #fff;
+      }
+      .btn-success:hover:not(:disabled) {
+        background: #22543d;
+      }
+      .btn-sm {
+        padding: 0.3rem 0.75rem;
+        font-size: 0.8rem;
+      }
+
+      .error {
+        color: #fc8181;
+        font-size: 0.88rem;
+        margin-top: -0.5rem;
+        margin-bottom: 1rem;
+        min-height: 1.2em;
+      }
+      .success-banner {
+        background: #1c4532;
+        border: 1px solid #276749;
+        border-radius: 8px;
+        padding: 0.75rem 1rem;
+        color: #9ae6b4;
+        font-size: 0.9rem;
+        margin-bottom: 1.25rem;
+        display: none;
+      }
+
+      nav.tabs {
+        display: flex;
+        gap: 0.5rem;
+        margin-bottom: 1.75rem;
+      }
+      nav.tabs button {
+        background: transparent;
+        border: 1px solid #2d3748;
+        color: #a0aec0;
+        padding: 0.5rem 1.1rem;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 0.9rem;
+        transition: all 0.15s;
+      }
+      nav.tabs button.active,
+      nav.tabs button:hover {
+        background: #2d3748;
+        color: #e2e8f0;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.88rem;
+      }
+      th {
+        text-align: left;
+        padding: 0.6rem 0.75rem;
+        color: #718096;
+        border-bottom: 1px solid #2d3748;
+        font-weight: 500;
+      }
+      td {
+        padding: 0.65rem 0.75rem;
+        border-bottom: 1px solid #1e2533;
+      }
+      tr:last-child td {
+        border-bottom: none;
+      }
+      tr:hover td {
+        background: #1e2533;
+      }
+
+      .badge {
+        display: inline-block;
+        padding: 0.2rem 0.6rem;
+        border-radius: 9999px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        letter-spacing: 0.04em;
+      }
+      .badge-pending {
+        background: #744210;
+        color: #fbd38d;
+      }
+      .badge-confirmed {
+        background: #1c4532;
+        color: #9ae6b4;
+      }
+
+      .btn-approve {
+        background: #2c5282;
+        color: #fff;
+      }
+      .btn-approve:hover:not(:disabled) {
+        background: #2a4365;
+      }
+
+      .countdown {
+        font-size: 0.85rem;
+        color: #f6ad55;
+        margin-bottom: 1rem;
+      }
+      .countdown.urgent {
+        color: #fc8181;
+      }
+
+      .spinner {
+        display: inline-block;
+        width: 14px;
+        height: 14px;
+        border: 2px solid #4a5568;
+        border-top-color: #63b3ed;
+        border-radius: 50%;
+        animation: spin 0.7s linear infinite;
+        vertical-align: middle;
+        margin-right: 6px;
+      }
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      #trade-panel .card {
+        margin-top: 1.5rem;
+      }
+      .form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>⚡ Verto Trading Demo</h1>
+      <div id="user-info">
+        <span id="user-label">Signed in as <span id="user-name"></span></span>
+        <button id="logout-btn" onclick="logout()">Log out</button>
+      </div>
+    </header>
+
+    <main>
+      <!-- LOGIN -->
+      <section id="section-login" class="section active">
+        <div class="card" style="max-width: 380px; margin: 0 auto">
+          <h2>Sign in</h2>
+          <label for="username">Username</label>
+          <input
+            id="username"
+            type="text"
+            placeholder="demo_client"
+            autocomplete="username" />
+          <label for="password">Password</label>
+          <input
+            id="password"
+            type="password"
+            placeholder="demo123"
+            autocomplete="current-password" />
+          <div class="error" id="login-error"></div>
+          <button class="btn btn-primary" id="login-btn" onclick="doLogin()">
+            Sign in
+          </button>
+        </div>
+      </section>
+
+      <!-- MAIN APP -->
+      <section id="section-app" class="section">
+        <nav class="tabs">
+          <button
+            class="active"
+            onclick="showTab('products')"
+            id="tab-btn-products">
+            Products
+          </button>
+          <button onclick="showTab('orders')" id="tab-btn-orders">
+            My Orders
+          </button>
+          <button
+            onclick="showTab('approve')"
+            id="tab-btn-approve"
+            style="display: none">
+            Approve Orders
+          </button>
+          <button
+            onclick="showTab('history')"
+            id="tab-btn-history"
+            style="display: none">
+            Past Approvals
+          </button>
+        </nav>
+
+        <!-- Products tab -->
+        <div id="tab-products">
+          <div class="card">
+            <h2>Available Products</h2>
+            <div id="products-loading">
+              <span class="spinner"></span> Loading…
+            </div>
+            <table id="products-table" style="display: none">
+              <thead>
+                <tr>
+                  <th>ISIN</th>
+                  <th>Description</th>
+                  <th>Bank</th>
+                  <th>Bid</th>
+                  <th>Ask</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody id="products-body"></tbody>
+            </table>
+            <div class="error" id="products-error"></div>
+          </div>
+
+          <!-- Trade panel -->
+          <div id="trade-panel" style="display: none">
+            <div class="card">
+              <h2 id="trade-title">Place Trade</h2>
+              <div class="success-banner" id="trade-success"></div>
+              <div class="countdown" id="trade-countdown"></div>
+              <div class="form-row">
+                <div>
+                  <label>Direction</label>
+                  <select id="trade-side">
+                    <option value="BUY">BUY</option>
+                    <option value="SELL">SELL</option>
+                  </select>
+                </div>
+                <div>
+                  <label>Quantity (face value)</label>
+                  <input
+                    id="trade-qty"
+                    type="number"
+                    min="1000"
+                    step="1000"
+                    value="100000" />
+                </div>
+              </div>
+              <div
+                id="trade-price-row"
+                style="
+                  margin-bottom: 1rem;
+                  color: #a0aec0;
+                  font-size: 0.9rem;
+                "></div>
+              <div class="error" id="trade-error"></div>
+              <button
+                class="btn btn-success"
+                id="trade-btn"
+                onclick="doTrade()">
+                Submit Trade
+              </button>
+              <button
+                class="btn"
+                style="
+                  background: transparent;
+                  border: 1px solid #4a5568;
+                  color: #a0aec0;
+                  margin-left: 0.75rem;
+                "
+                onclick="cancelTrade()">
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Orders tab -->
+        <div id="tab-orders" style="display: none">
+          <div class="card">
+            <h2>My Orders</h2>
+            <div id="orders-loading" style="display: none">
+              <span class="spinner"></span> Loading…
+            </div>
+            <table id="orders-table" style="display: none">
+              <thead>
+                <tr>
+                  <th>Ref</th>
+                  <th>Product</th>
+                  <th>Side</th>
+                  <th>Quantity</th>
+                  <th>Price</th>
+                  <th>Notional</th>
+                  <th>Status</th>
+                  <th>Date</th>
+                </tr>
+              </thead>
+              <tbody id="orders-body"></tbody>
+            </table>
+            <div class="error" id="orders-error"></div>
+            <div
+              id="orders-empty"
+              style="display: none; color: #718096; font-size: 0.9rem">
+              No orders yet.
+            </div>
+          </div>
+        </div>
+
+        <!-- Approve Orders tab (bank only) -->
+        <div id="tab-approve" style="display: none">
+          <div class="card">
+            <h2>Pending Orders — Approve</h2>
+            <div id="approve-loading" style="display: none">
+              <span class="spinner"></span> Loading…
+            </div>
+            <table id="approve-table" style="display: none">
+              <thead>
+                <tr>
+                  <th>Ref</th>
+                  <th>Product</th>
+                  <th>Side</th>
+                  <th>Quantity</th>
+                  <th>Price</th>
+                  <th>Notional</th>
+                  <th>Date</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody id="approve-body"></tbody>
+            </table>
+            <div class="error" id="approve-error"></div>
+            <div
+              id="approve-empty"
+              style="display: none; color: #718096; font-size: 0.9rem">
+              No pending orders.
+            </div>
+          </div>
+        </div>
+
+        <!-- Past Approvals tab (bank only) -->
+        <div id="tab-history" style="display: none">
+          <div class="card">
+            <h2>Past Approvals</h2>
+            <div id="history-loading" style="display: none">
+              <span class="spinner"></span> Loading…
+            </div>
+            <table id="history-table" style="display: none">
+              <thead>
+                <tr>
+                  <th>Ref</th>
+                  <th>Product</th>
+                  <th>Side</th>
+                  <th>Quantity</th>
+                  <th>Price</th>
+                  <th>Notional</th>
+                  <th>Date</th>
+                </tr>
+              </thead>
+              <tbody id="history-body"></tbody>
+            </table>
+            <div class="error" id="history-error"></div>
+            <div
+              id="history-empty"
+              style="display: none; color: #718096; font-size: 0.9rem">
+              No approved orders yet.
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <script>
+      let token = null;
+      let usertype = null;
+      let rfqTimer = null;
+      let currentRfq = null;
+
+      // ── helpers ──────────────────────────────────────────────────────────────────
+
+      function fmt(n) {
+        return Number(n).toLocaleString(undefined, {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        });
+      }
+
+      async function api(method, path, body) {
+        const opts = {
+          method,
+          headers: { "Content-Type": "application/json" },
+        };
+        if (token) opts.headers["Authorization"] = "Bearer " + token;
+        if (body) opts.body = JSON.stringify(body);
+        const res = await fetch(path, opts);
+        if (res.status === 401) {
+          showError("login-error", "Session expired, please log in again");
+          token = null;
+          usertype = null;
+          document.getElementById("user-info").style.display = "none";
+          document.getElementById("user-name").textContent = "";
+          showSection("section-login");
+          throw new Error("Unauthorized");
+        }
+        if (!res.ok) {
+          const err = await res
+            .json()
+            .catch(() => ({ detail: "Unknown error" }));
+          throw new Error(err.detail || "Request failed");
+        }
+        return res.json();
+      }
+
+      function showSection(id) {
+        document
+          .querySelectorAll(".section")
+          .forEach((s) => s.classList.remove("active"));
+        document.getElementById(id).classList.add("active");
+      }
+
+      function showError(id, msg) {
+        const el = document.getElementById(id);
+        if (el) el.textContent = msg || "";
+      }
+
+      function setLoading(btnId, loading) {
+        const btn = document.getElementById(btnId);
+        btn.disabled = loading;
+      }
+
+      function showTab(name) {
+        const tabs = ["products", "orders", "approve", "history"];
+        tabs.forEach((t) => {
+          const btn = document.getElementById(`tab-btn-${t}`);
+          if (btn) btn.classList.toggle("active", t === name);
+          const panel = document.getElementById(`tab-${t}`);
+          if (panel) panel.style.display = t === name ? "" : "none";
+        });
+        if (name === "orders") loadOrders();
+        if (name === "approve") loadPendingOrders();
+        if (name === "history") loadApprovalHistory();
+      }
+
+      // ── auth ─────────────────────────────────────────────────────────────────────
+
+      async function doLogin() {
+        showError("login-error", "");
+        setLoading("login-btn", true);
+        const username = document.getElementById("username").value.trim();
+        const password = document.getElementById("password").value;
+        try {
+          const form = new URLSearchParams({
+            username,
+            password,
+            grant_type: "password",
+          });
+          const res = await fetch("/token", {
+            method: "POST",
+            headers: { "Content-Type": "application/x-www-form-urlencoded" },
+            body: form,
+          });
+          if (!res.ok) {
+            const e = await res.json();
+            throw new Error(e.detail || "Invalid credentials");
+          }
+          const data = await res.json();
+          token = data.access_token;
+          // Decode usertype from JWT payload (base64 middle segment)
+          const payload = JSON.parse(atob(token.split(".")[1]));
+          usertype = payload.usertype || "client";
+          document.getElementById("user-name").textContent = payload.sub;
+          document.getElementById("user-info").style.display = "flex";
+          // Show Approve tab for bank users; hide Products/My Orders for bank
+          if (usertype === "bank") {
+            document.getElementById("tab-btn-products").style.display = "none";
+            document.getElementById("tab-btn-orders").style.display = "none";
+            document.getElementById("tab-btn-approve").style.display = "";
+            document.getElementById("tab-btn-history").style.display = "";
+            showSection("section-app");
+            showTab("approve");
+          } else {
+            document.getElementById("tab-btn-products").style.display = "";
+            document.getElementById("tab-btn-orders").style.display = "";
+            document.getElementById("tab-btn-approve").style.display = "none";
+            showSection("section-app");
+            showTab("products");
+            loadProducts();
+          }
+        } catch (e) {
+          showError("login-error", e.message);
+        } finally {
+          setLoading("login-btn", false);
+        }
+      }
+
+      function logout() {
+        token = null;
+        usertype = null;
+        clearRfqTimer();
+        currentRfq = null;
+        // Reset tab visibility to defaults
+        document.getElementById("tab-btn-products").style.display = "";
+        document.getElementById("tab-btn-orders").style.display = "";
+        document.getElementById("tab-btn-approve").style.display = "none";
+        document.getElementById("tab-btn-history").style.display = "none";
+        document.getElementById("user-info").style.display = "none";
+        document.getElementById("user-name").textContent = "";
+        document.getElementById("login-error").textContent = "";
+        document.getElementById("password").value = "";
+        showSection("section-login");
+      }
+
+      document.getElementById("password").addEventListener("keydown", (e) => {
+        if (e.key === "Enter") doLogin();
+      });
+
+      // ── products ─────────────────────────────────────────────────────────────────
+
+      async function loadProducts() {
+        document.getElementById("products-loading").style.display = "";
+        document.getElementById("products-table").style.display = "none";
+        showError("products-error", "");
+        try {
+          const products = await api("GET", "/products");
+          const tbody = document.getElementById("products-body");
+          tbody.innerHTML = products
+            .map(
+              (p) => `
+        <tr>
+          <td><code>${p.isin}</code></td>
+          <td>${p.description}</td>
+          <td>${p.bank}</td>
+          <td>${fmt(p.bid)}</td>
+          <td>${fmt(p.ask)}</td>
+          <td><button class="btn btn-primary btn-sm" onclick="openTrade(${p.ref})">Trade</button></td>
+        </tr>
+      `,
+            )
+            .join("");
+          document.getElementById("products-loading").style.display = "none";
+          document.getElementById("products-table").style.display = "";
+        } catch (e) {
+          document.getElementById("products-loading").style.display = "none";
+          showError("products-error", e.message);
+        }
+      }
+
+      // ── rfq / trade ───────────────────────────────────────────────────────────────
+
+      async function openTrade(productRef) {
+        clearRfqTimer();
+        document.getElementById("trade-panel").style.display = "";
+        document.getElementById("trade-btn").disabled = true;
+        document.getElementById("trade-title").textContent = "Getting quote…";
+        document.getElementById("trade-price-row").textContent = "";
+        showError("trade-error", "");
+        document.getElementById("trade-success").style.display = "none";
+        document.getElementById("trade-countdown").textContent = "";
+
+        try {
+          const rfq = await api("GET", `/rfq/${productRef}`);
+          currentRfq = rfq;
+          document.getElementById("trade-title").textContent =
+            `Trade — ${rfq.description}`;
+          document.getElementById("trade-price-row").textContent =
+            `Quote price: ${fmt(rfq.price)}   |   Valid for 30 seconds`;
+          document.getElementById("trade-btn").disabled = false;
+          startCountdown(rfq.valid_for_seconds);
+        } catch (e) {
+          showError("trade-error", e.message);
+        }
+      }
+
+      function startCountdown(seconds) {
+        let remaining = seconds;
+        function tick() {
+          const el = document.getElementById("trade-countdown");
+          el.textContent = `⏱ Quote expires in ${remaining}s`;
+          el.className = "countdown" + (remaining <= 10 ? " urgent" : "");
+          if (remaining <= 0) {
+            el.textContent = "⚠ Quote expired — please request a new quote";
+            document.getElementById("trade-btn").disabled = true;
+            currentRfq = null;
+            return;
+          }
+          remaining--;
+          rfqTimer = setTimeout(tick, 1000);
+        }
+        tick();
+      }
+
+      function clearRfqTimer() {
+        if (rfqTimer) {
+          clearTimeout(rfqTimer);
+          rfqTimer = null;
+        }
+      }
+
+      function cancelTrade() {
+        clearRfqTimer();
+        currentRfq = null;
+        document.getElementById("trade-panel").style.display = "none";
+      }
+
+      async function doTrade() {
+        if (!currentRfq) {
+          showError("trade-error", "Quote expired, please try again");
+          return;
+        }
+        showError("trade-error", "");
+        setLoading("trade-btn", true);
+        try {
+          const result = await api("POST", "/trade", {
+            product_ref: currentRfq.product_ref,
+            buy_sell: document.getElementById("trade-side").value,
+            quantity: parseFloat(document.getElementById("trade-qty").value),
+            price: currentRfq.price,
+          });
+          clearRfqTimer();
+          currentRfq = null;
+          document.getElementById("trade-countdown").textContent = "";
+          const banner = document.getElementById("trade-success");
+          banner.textContent = `✅ Trade placed successfully — Ref: ${result.trade_ref}  |  Notional: ${fmt(result.notional)}`;
+          banner.style.display = "";
+          document.getElementById("trade-btn").disabled = true;
+          setTimeout(() => {
+            banner.style.display = "none";
+            document.getElementById("trade-panel").style.display = "none";
+          }, 3000);
+        } catch (e) {
+          showError("trade-error", e.message);
+        } finally {
+          setLoading("trade-btn", false);
+        }
+      }
+
+      // ── orders ────────────────────────────────────────────────────────────────────
+
+      async function loadOrders() {
+        document.getElementById("orders-loading").style.display = "";
+        document.getElementById("orders-table").style.display = "none";
+        document.getElementById("orders-empty").style.display = "none";
+        showError("orders-error", "");
+        try {
+          const orders = await api("GET", "/orders");
+          document.getElementById("orders-loading").style.display = "none";
+          if (!orders.length) {
+            document.getElementById("orders-empty").style.display = "";
+            return;
+          }
+          const tbody = document.getElementById("orders-body");
+          tbody.innerHTML = orders
+            .map((o) => {
+              const badge =
+                o.status === "CONFIRMED"
+                  ? `<span class="badge badge-confirmed">CONFIRMED</span>`
+                  : `<span class="badge badge-pending">PENDING</span>`;
+              const date = o.created_at
+                ? new Date(o.created_at).toLocaleString()
+                : "—";
+              return `<tr>
+          <td><code>${o.trade_ref}</code></td>
+          <td>${o.product_ref}</td>
+          <td>${o.buy_sell}</td>
+          <td>${fmt(o.quantity)}</td>
+          <td>${fmt(o.price)}</td>
+          <td>${fmt(o.notional)}</td>
+          <td>${badge}</td>
+          <td style="font-size:0.8rem;color:#718096">${date}</td>
+        </tr>`;
+            })
+            .join("");
+          document.getElementById("orders-table").style.display = "";
+        } catch (e) {
+          document.getElementById("orders-loading").style.display = "none";
+          showError("orders-error", e.message);
+        }
+      }
+
+      // ── bank: pending orders + approve ───────────────────────────────────────────
+
+      async function loadPendingOrders() {
+        document.getElementById("approve-loading").style.display = "";
+        document.getElementById("approve-table").style.display = "none";
+        document.getElementById("approve-empty").style.display = "none";
+        showError("approve-error", "");
+        try {
+          const orders = await api("GET", "/orders/pending");
+          document.getElementById("approve-loading").style.display = "none";
+          if (!orders.length) {
+            document.getElementById("approve-empty").style.display = "";
+            return;
+          }
+          const tbody = document.getElementById("approve-body");
+          tbody.innerHTML = orders
+            .map((o) => {
+              const date = o.created_at
+                ? new Date(o.created_at).toLocaleString()
+                : "—";
+              return `<tr id="approve-row-${o.trade_ref}">
+          <td><code>${o.trade_ref}</code></td>
+          <td>${o.product_ref}</td>
+          <td>${o.buy_sell}</td>
+          <td>${fmt(o.quantity)}</td>
+          <td>${fmt(o.price)}</td>
+          <td>${fmt(o.notional)}</td>
+          <td style="font-size:0.8rem;color:#718096">${date}</td>
+          <td><button class="btn btn-approve btn-sm" id="approve-btn-${o.trade_ref}" onclick="approveOrder('${o.trade_ref}')">Approve</button></td>
+        </tr>`;
+            })
+            .join("");
+          document.getElementById("approve-table").style.display = "";
+        } catch (e) {
+          document.getElementById("approve-loading").style.display = "none";
+          showError("approve-error", e.message);
+        }
+      }
+
+      async function approveOrder(tradeRef) {
+        const btn = document.getElementById(`approve-btn-${tradeRef}`);
+        if (btn) btn.disabled = true;
+        showError("approve-error", "");
+        try {
+          await api("POST", `/orders/${tradeRef}/approve`);
+          const row = document.getElementById(`approve-row-${tradeRef}`);
+          if (row) {
+            row.style.opacity = "0.4";
+            row.cells[row.cells.length - 1].innerHTML =
+              '<span class="badge badge-confirmed">CONFIRMED</span>';
+          }
+        } catch (e) {
+          showError("approve-error", e.message);
+          if (btn) btn.disabled = false;
+        }
+      }
+
+      // ── bank: past approvals ─────────────────────────────────────────────────────
+
+      async function loadApprovalHistory() {
+        document.getElementById("history-loading").style.display = "";
+        document.getElementById("history-table").style.display = "none";
+        document.getElementById("history-empty").style.display = "none";
+        showError("history-error", "");
+        try {
+          const orders = await api("GET", "/orders/approved");
+          document.getElementById("history-loading").style.display = "none";
+          if (!orders.length) {
+            document.getElementById("history-empty").style.display = "";
+            return;
+          }
+          const tbody = document.getElementById("history-body");
+          tbody.innerHTML = orders
+            .map((o) => {
+              const date = o.created_at
+                ? new Date(o.created_at).toLocaleString()
+                : "—";
+              return `<tr>
+          <td><code>${o.trade_ref}</code></td>
+          <td>${o.product_ref}</td>
+          <td>${o.buy_sell}</td>
+          <td>${fmt(o.quantity)}</td>
+          <td>${fmt(o.price)}</td>
+          <td>${fmt(o.notional)}</td>
+          <td style="font-size:0.8rem;color:#718096">${date}</td>
+        </tr>`;
+            })
+            .join("");
+          document.getElementById("history-table").style.display = "";
+        } catch (e) {
+          document.getElementById("history-loading").style.display = "none";
+          showError("history-error", e.message);
+        }
+      }
+    </script>
+  </body>
+</html>
