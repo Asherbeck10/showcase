@@ -1,4 +1,4 @@
-# Verto Trading Demo
+# Trading Demo
 
 A minimal showcase of the Verto trading platform: **Login → Browse Products → Place a Trade → View Your Orders**.
 
@@ -41,22 +41,22 @@ Open [http://localhost:8000](http://localhost:8000) in your browser.
 
 ### Demo credentials
 
-| Username     | Password |
-|--------------|----------|
-| demo_client  | demo123  |
-| demo_bank    | demo123  |
+| Username    | Password |
+| ----------- | -------- |
+| demo_client | demo123  |
+| demo_bank   | demo123  |
 
 ---
 
 ## API Endpoints
 
-| Method | Path                  | Auth? | Description                          |
-|--------|-----------------------|-------|--------------------------------------|
-| POST   | `/token`              | No    | Login — returns JWT access token     |
-| GET    | `/products`           | Yes   | List products with bid/ask           |
-| GET    | `/rfq/{product_ref}`  | Yes   | Live quote (price + 30s validity)    |
-| GET    | `/orders`             | Yes   | List your trades                     |
-| POST   | `/trade`              | Yes   | Place a new trade                    |
+| Method | Path                 | Auth? | Description                       |
+| ------ | -------------------- | ----- | --------------------------------- |
+| POST   | `/token`             | No    | Login — returns JWT access token  |
+| GET    | `/products`          | Yes   | List products with bid/ask        |
+| GET    | `/rfq/{product_ref}` | Yes   | Live quote (price + 30s validity) |
+| GET    | `/orders`            | Yes   | List your trades                  |
+| POST   | `/trade`             | Yes   | Place a new trade                 |
 
 All protected endpoints use `Authorization: Bearer <token>`.
 
