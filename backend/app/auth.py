@@ -4,7 +4,7 @@ from datetime import datetime, timedelta, timezone
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 
-DEMO_SECRET_KEY = "verto-demo-secret"
+DEMO_SECRET_KEY = "demo-secret"
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 

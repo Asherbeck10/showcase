@@ -1,6 +1,6 @@
 # Trading Demo
 
-A minimal showcase of the Verto trading platform: **Login → Browse Products → Place a Trade → View Your Orders**.
+A minimal showcase of the xxxx trading platform: **Login → Browse Products → Place a Trade → View Your Orders**.
 
 Built with FastAPI, SQLite (in-memory), and a single plain HTML page. No build toolchain, no Docker.
 

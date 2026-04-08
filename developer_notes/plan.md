@@ -1,4 +1,4 @@
-# Plan: Verto Trading Platform — Showcase Version (Sharp MVP)
+# Plan:Trading Platform — Showcase Version (Sharp MVP)
 
 ## Goal
 
@@ -43,7 +43,7 @@ engine = create_async_engine(
 ## Architecture
 
 ```text
-verto-trading-demo/
+showcase/
 ├── backend/
 │   ├── app/
 │   │   ├── main.py        # FastAPI app + mounts static HTML + runs seed on startup
@@ -70,16 +70,16 @@ verto-trading-demo/
 
 ## API Endpoints (7 total)
 
-| Method | Path                          | Auth?      | Description                                                                                    |
-| ------ | ----------------------------- | ---------- | ---------------------------------------------------------------------------------------------- |
-| POST   | /token                        | No         | Login → returns JWT access token                                                               |
-| GET    | /products                     | Yes        | List available products with bid/ask                                                           |
-| GET    | /rfq/{product_ref}            | Yes        | Get live quote — returns product details + `price` (ask) + `valid_for_seconds: 30`             |
-| GET    | /orders                       | Yes        | List caller's own trades                                                                       |
-| POST   | /trade                        | Yes        | Place a trade — body: product_ref, buy_sell, quantity, price → notional calculated server-side |
-| GET    | /orders/pending               | Bank only  | List all PENDING trades across all clients                                                     |
-| GET    | /orders/approved              | Bank only  | List all CONFIRMED trades (past approvals)                                                     |
-| POST   | /orders/{trade_ref}/approve   | Bank only  | Approve a PENDING trade → status becomes CONFIRMED                                             |
+| Method | Path                        | Auth?     | Description                                                                                    |
+| ------ | --------------------------- | --------- | ---------------------------------------------------------------------------------------------- |
+| POST   | /token                      | No        | Login → returns JWT access token                                                               |
+| GET    | /products                   | Yes       | List available products with bid/ask                                                           |
+| GET    | /rfq/{product_ref}          | Yes       | Get live quote — returns product details + `price` (ask) + `valid_for_seconds: 30`             |
+| GET    | /orders                     | Yes       | List caller's own trades                                                                       |
+| POST   | /trade                      | Yes       | Place a trade — body: product_ref, buy_sell, quantity, price → notional calculated server-side |
+| GET    | /orders/pending             | Bank only | List all PENDING trades across all clients                                                     |
+| GET    | /orders/approved            | Bank only | List all CONFIRMED trades (past approvals)                                                     |
+| POST   | /orders/{trade_ref}/approve | Bank only | Approve a PENDING trade → status becomes CONFIRMED                                             |
 
 All protected endpoints use `Authorization: Bearer <token>` header.
 
@@ -159,7 +159,7 @@ The frontend shows a 30-second countdown after receiving the quote. If the user 
 ## Auth Design
 
 - Algorithm: **HS256**
-- Secret: hardcoded (`DEMO_SECRET_KEY = "verto-demo-secret"`)
+- Secret: hardcoded (`DEMO_SECRET_KEY = "demo-secret"`)
 - Token expiry: **30 minutes** (`exp = now + timedelta(minutes=30)`)
 - Claims: `sub` (username), `exp`, `usertype`
 - On expiry: API returns 401; frontend shows "Session expired, please log in again"
