@@ -25,4 +25,11 @@ app.include_router(products.router)
 app.include_router(rfq.router)
 app.include_router(trades.router)
 
-app.mount("/", StaticFiles(directory="static", html=True), name="static")
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
+app.mount(
+    "/",
+    StaticFiles(directory=os.path.join(BASE_DIR, "static"), html=True),
+    name="static"
+)
